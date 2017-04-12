@@ -1,6 +1,8 @@
 <h1>
 
-	FabricJS cropzoom imageHelper</h1>
+	FabricJS imageHelper</h1>
+
+
 <div id="canvasContainer">
 	<canvas id="c" width="400" height="400"></canvas>
 </div>
@@ -24,7 +26,9 @@ var imageHelper = {
 		if (obj instanceof fabric.ZoomablePannableImage) {
 			obj.lockMovementX = imageHelper.zoomPanMode;
 			obj.lockMovementY = imageHelper.zoomPanMode;
-			obj.lockUniScaling = imageHelper.zoomPanMode;
+			obj.lockScalingX = imageHelper.zoomPanMode;
+			obj.lockScalingY = imageHelper.zoomPanMode;
+			obj.lockRotation = imageHelper.zoomPanMode;
 		}
 	},
 
