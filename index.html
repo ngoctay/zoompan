@@ -1,0 +1,177 @@
+<h1>
+
+	FabricJS cropzoom imageHelper</h1>
+<div id="canvasContainer">
+	<canvas id="c" width="400" height="400"></canvas>
+</div>
+<br>
+<button type="button" onclick="imageHelper.toggleZoomPanMode()">Toggle Zoom/Pan Mode</button>
+
+<script src='./fabric.js'></script>
+<script src='./fabric-zoomable-pannable-image.js'></script>
+<script>
+
+// Copy this helper to annotation.js 
+var imageHelper = {
+	canvas: undefined,
+	zoomPanMode: false,
+
+	/**
+	 * Toggle image movement.
+	 */
+	toggleMovement: function () {
+		// Lock or unlock image movement
+		var objects = imageHelper.canvas.getObjects();
+		objects.forEach(function (obj) {
+			if (obj instanceof fabric.ZoomablePannableImage) {
+				obj.lockMovementX = imageHelper.zoomPanMode;
+				obj.lockMovementY = imageHelper.zoomPanMode;  
+			}
+		});
+	},
+
+	/**
+	 * Toggle zoom/pan mode.
+	 */
+	toggleZoomPanMode: function () {
+		imageHelper.zoomPanMode = !imageHelper.zoomPanMode;
+		imageHelper.toggleMovement();
+		console.debug('zoomPanMode', imageHelper.zoomPanMode);
+	},
+
+	/**
+	 * Add an image to the canvas.
+	 * @param String url the image url
+	 * @param Boolean isBackground true if add the image as canvas background
+	 */
+	addImage: function (url, isBackground) {
+		var img = new Image();
+		img.onload = function() {
+
+			// Canculate the image size, full width for background,
+			// otherwise max of 3/4 canvas width 
+			var newWidth = isBackground ? 
+				imageHelper.canvas.getWidth() : 
+				Math.min(imageHelper.canvas.getWidth() * (3 / 4), img.width);
+			img.height = img.height * newWidth / img.width;
+			img.width = newWidth;
+
+			// Add to canvas
+			var zoomablePannableImage = new fabric.ZoomablePannableImage(this, {
+				originX: 'center',
+				originY: 'center',
+				left: imageHelper.canvas.getWidth() / 2,
+				top: imageHelper.canvas.getHeight() / 2
+			});
+
+			imageHelper.canvas.add(zoomablePannableImage);
+			imageHelper.canvas.centerObject(zoomablePannableImage);
+
+			// Background image should be sent to back, and not active by default
+			if (isBackground) {
+				imageHelper.canvas.sendToBack(zoomablePannableImage);
+			} else {
+				imageHelper.canvas.setActiveObject(zoomablePannableImage);
+			}
+
+			imageHelper.toggleMovement();
+		};
+
+		img.src = url;
+	},
+
+	/**
+	 * Check if the image status is valid to perform zooming or panning.
+	 * @param Object obj the image object ot check, nullable
+	 * @returns true if valid, otherwise false
+	 */
+	isValidForZoomingPanning: function (obj) {
+		if (!imageHelper.canvas || !imageHelper.zoomPanMode) {
+			return false;
+		}
+
+		var activeObject = imageHelper.canvas.getActiveObject();
+		if (activeObject && (!obj || obj === activeObject)) {
+			return true;
+		}
+		
+		return false;
+	},
+
+	/**
+	 * Zoom or pan the active image inside the canvas.
+   * @param Number x the pan by x, negative to pan left, positive to pan right
+   * @param Number y the pan by y, negative to pan up, positive to pan down 
+   * @param Number z the zoom by, negative to zoom out (larger), negative to zoom in (smaller)
+   * @param Function callback the callback function
+	 * @returns true if the image is zoomed or panned, otherwise false
+	 */
+	zoomPanBy: function (x, y, z) {
+		if (imageHelper.isValidForZoomingPanning()) {
+			imageHelper.canvas.getActiveObject().zoomPanBy(x, y, z, function () {
+				imageHelper.canvas.renderAll();
+			});
+			return true;
+		}
+
+		return false;
+	},
+
+	init: function () {
+		// Init canvas
+		imageHelper.canvas = new fabric.Canvas('c');
+
+    // Mouse wheel for zooming
+    document.onmousewheel = function (event) {
+			if (!event.ctrlKey) {
+				return false;
+			}
+
+			var handled = imageHelper.zoomPanBy(0, 0, -event.deltaY / 5);
+
+			if (handled) {
+      	event.preventDefault();
+			}
+
+			return handled;
+    };
+
+		// Mouse move for panning
+		imageHelper.canvas.on('mouse:move', function (options) {
+			// Accept only left mouse button in the active image
+			if (options.e.buttons !== 1 ||
+			 !imageHelper.isValidForZoomingPanning(options.target)) {
+				return false;
+			}
+
+			var event = options.e;
+			var handled = imageHelper.zoomPanBy(-event.movementX / 5, -event.movementY / 5, 0);
+
+			if (handled) {
+      	event.preventDefault();
+			}
+
+			return handled;
+		});
+
+		// Touch gesture for zooming
+		imageHelper.canvas.on('touch:gesture', function (options) {
+			console.log(options);
+		});
+
+		// Touch drag for panning
+		imageHelper.canvas.on('touch:drag', function (options) {
+			console.log(options);
+		});
+
+		// Add some sample images
+		imageHelper.addImage('http://images.samsung.com/is/image/samsung/p5/sec/home/Gear_VR_360_170406.png?$ORIGIN_PNG$');
+		imageHelper.addImage('http://images.samsung.com/is/image/samsung/p5/sec/home/bg_GalaxyS8_1440.jpg', true);
+	},
+};
+
+window.onload = function() { imageHelper.init(); };
+
+
+
+</script>
