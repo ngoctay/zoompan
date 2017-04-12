@@ -125,7 +125,6 @@ var imageHelper = {
 			}
 
 			console.log('onmousewheel');
-			
 
 			var handled = imageHelper.zoomPanBy(0, 0, -event.deltaY / 5);
 
@@ -136,15 +135,13 @@ var imageHelper = {
 			return handled;
     };
 
-		
-
 		// Zooming: touch gesture
 		imageHelper.canvas.on('touch:gesture', function (options) {
 			console.log('touch:gesture');
-			console.log(options);
+			console.log(JSON.stringify(options))
 		});
 
-		// Panning: touch drag and mouse move events
+		// Panning: touch drag and mouse move
 		imageHelper.canvas.on('touch:drag', function (options) {
 			// Accept only left mouse button in the active image
 			if (!(options.e instanceof MouseEvent) ||
