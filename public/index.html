@@ -167,7 +167,8 @@ var imageHelper = {
 
 		// Panning: touch drag and mouse move
 		imageHelper.canvas.on('touch:drag', function (options) {
-			// Accept only left mouse button in the active image
+			console.log(JSON.stringify(options));
+			
 			if (!(options.e instanceof MouseEvent) ||
 				!imageHelper.isValidForZoomingPanning(options.target)) {
 				return;
