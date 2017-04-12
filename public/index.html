@@ -146,12 +146,13 @@ var imageHelper = {
 		imageHelper.canvas.on('touch:gesture', function (options) {
 			if (options.fingers !== 2 ||
 				!imageHelper.isValidForZoomingPanning(options.target)) {
-				return false;
+					console.log(1111);
+				return;
 			}
 
 			if (options.state === 'start') {
 				currentScale = 1.0;
-				return false;
+				return;
 			}
 
 			var scale = options.scale - currentScale;
