@@ -175,6 +175,7 @@ var imageHelper = {
 			}
 
 			var event = options.e;
+			console.log(event.movementX);
 			var handled = imageHelper.zoomPanBy(-event.movementX / 5, -event.movementY / 5, 0);
 
 			if (handled) {
