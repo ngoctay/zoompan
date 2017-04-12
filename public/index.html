@@ -166,22 +166,42 @@ var imageHelper = {
 		});
 
 		// Panning: touch drag and mouse move
+		var currentXY = 0;
 		imageHelper.canvas.on('touch:drag', function (options) {
 			console.log(JSON.stringify(options));
 			
+			if (options.self.state === 'down') {
+				currentXY = options.self.start;
+			}
+
+			if (options.self.state === 'up') {
+				return;
+			}
+
 			if (!imageHelper.isValidForZoomingPanning(options.target)) {
 				return;
 			}
 
 			var event = options.e;
-			console.log(event.movementX);
-			var handled = imageHelper.zoomPanBy(-event.movementX / 5, -event.movementY / 5, 0);
-
-			if (handled) {
-      	event.preventDefault();
+			// Mouse move: use movementX and movementY
+			// Touch drag: calculate from previous x, y
+			if (event.movementX) {
+				imageHelper.zoomPanBy(-event.movementX / 5, -event.movementY / 5, 0);
+			} else {
+				imageHelper.zoomPanBy(-(options.self.x - currentXY.x) / 5, -(options.self.y - currentXY.y) / 5, 0);
+				currentXY = {
+					x: options.self.x,
+					y: options.self.y
+				};
 			}
+			var movementX = event.movementX || (options.self.x) 
+			var handled = imageHelper.zoomPanBy(-movementX / 5, -movementY / 5, 0);
 
-			return handled;
+			// if (handled && event.preventDefault) {
+      // 	event.preventDefault();
+			// }
+
+			// return handled;
 		});
 
 		// Add some sample images
