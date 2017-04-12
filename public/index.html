@@ -144,22 +144,22 @@ var imageHelper = {
 		// Zooming: touch gesture
 		var currentScale = 1.0;
 		imageHelper.canvas.on('touch:gesture', function (options) {
-			if (options.fingers !== 2 ||
+			if (options.self.fingers !== 2 ||
 				!imageHelper.isValidForZoomingPanning(options.target)) {
-					console.log(1111);
-				return;
+					console.log(options.self.fingers);
+					return;
 			}
 
-			if (options.state === 'start') {
+			if (options.self.state === 'start') {
 				currentScale = 1.0;
 				return;
 			}
 
-			var scale = options.scale - currentScale;
-			console.log(options.scale + ' - ' + currentScale + ' = ' + scale);
-			currentScale = options.scale;
+			var deltaScale = options.self.scale - currentScale;
+			console.log(options.self.scale + ' - ' + currentScale + ' = ' + deltaScale);
+			currentScale = options.self.scale;
 
-			imageHelper.zoomPanBy(0, 0, scale);
+			imageHelper.zoomPanBy(0, 0, deltaScale);
 		});
 
 		// Panning: touch drag and mouse move
