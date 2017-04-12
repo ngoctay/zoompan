@@ -169,8 +169,7 @@ var imageHelper = {
 		imageHelper.canvas.on('touch:drag', function (options) {
 			console.log(JSON.stringify(options));
 			
-			if (!(options.e instanceof MouseEvent) ||
-				!imageHelper.isValidForZoomingPanning(options.target)) {
+			if (!imageHelper.isValidForZoomingPanning(options.target)) {
 				return;
 			}
 
