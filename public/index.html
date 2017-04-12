@@ -139,7 +139,10 @@ var imageHelper = {
 		imageHelper.canvas.on('touch:gesture', function (options) {
 			console.log('touch:gesture');
 			console.log(options.e.constructor.name)
-			console.log(options.e.scale)
+			console.log(options.e.scaleY)
+			console.log(options.e.deltaY)
+			console.log(options.e.deltaX)
+			console.log(options.e.deltaZ)
 			console.log(JSON.stringify(options))
 		});
 
