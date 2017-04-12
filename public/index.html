@@ -155,6 +155,7 @@ var imageHelper = {
 			}
 
 			var scale = options.scale - currentScale;
+			console.log(options.scale + ' - ' + currentScale + ' = ' + scale);
 			currentScale = options.scale;
 
 			imageHelper.zoomPanBy(0, 0, scale);
