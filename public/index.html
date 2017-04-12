@@ -118,11 +118,14 @@ var imageHelper = {
 		// Init canvas
 		imageHelper.canvas = new fabric.Canvas('c');
 
-    // Mouse wheel for zooming
+    // Zooming: mouse wheel
     document.onmousewheel = function (event) {
 			if (!event.ctrlKey) {
 				return false;
 			}
+
+			console.log('onmousewheel');
+			
 
 			var handled = imageHelper.zoomPanBy(0, 0, -event.deltaY / 5);
 
@@ -133,11 +136,20 @@ var imageHelper = {
 			return handled;
     };
 
-		// Mouse move for panning
-		imageHelper.canvas.on('mouse:move', function (options) {
+		
+
+		// Zooming: touch gesture
+		imageHelper.canvas.on('touch:gesture', function (options) {
+			console.log('touch:gesture');
+			console.log(options);
+		});
+
+		// Panning: touch drag and mouse move events
+		imageHelper.canvas.on('touch:drag', function (options) {
 			// Accept only left mouse button in the active image
-			if (options.e.buttons !== 1 ||
-			 !imageHelper.isValidForZoomingPanning(options.target)) {
+			if (!(options.e instanceof MouseEvent) ||
+				options.e.buttons !== 1 ||
+				!imageHelper.isValidForZoomingPanning(options.target)) {
 				return false;
 			}
 
@@ -149,16 +161,6 @@ var imageHelper = {
 			}
 
 			return handled;
-		});
-
-		// Touch gesture for zooming
-		imageHelper.canvas.on('touch:gesture', function (options) {
-			console.log(options);
-		});
-
-		// Touch drag for panning
-		imageHelper.canvas.on('touch:drag', function (options) {
-			console.log(options);
 		});
 
 		// Add some sample images
