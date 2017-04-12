@@ -1,0 +1,23 @@
+{
+  "name": "fabricjs-zoomable-pannable-image",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngoctay/zoompan.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ngoctay/zoompan/issues"
+  },
+  "homepage": "https://github.com/ngoctay/zoompan#readme",
+  "dependencies": {
+    "finalhandler": "^1.0.1",
+    "serve-static": "^1.12.1"
+  }
+}

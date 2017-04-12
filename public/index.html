@@ -18,16 +18,13 @@ var imageHelper = {
 
 	/**
 	 * Toggle image movement.
+	 * @param Object obj the image object
 	 */
-	toggleMovement: function () {
-		// Lock or unlock image movement
-		var objects = imageHelper.canvas.getObjects();
-		objects.forEach(function (obj) {
-			if (obj instanceof fabric.ZoomablePannableImage) {
-				obj.lockMovementX = imageHelper.zoomPanMode;
-				obj.lockMovementY = imageHelper.zoomPanMode;  
-			}
-		});
+	toggleImageMovement: function (obj) {
+		if (obj instanceof fabric.ZoomablePannableImage) {
+			obj.lockMovementX = imageHelper.zoomPanMode;
+			obj.lockMovementY = imageHelper.zoomPanMode;  
+		}
 	},
 
 	/**
@@ -35,7 +32,7 @@ var imageHelper = {
 	 */
 	toggleZoomPanMode: function () {
 		imageHelper.zoomPanMode = !imageHelper.zoomPanMode;
-		imageHelper.toggleMovement();
+		imageHelper.canvas.getObjects().forEach(imageHelper.toggleImageMovement);
 		console.debug('zoomPanMode', imageHelper.zoomPanMode);
 	},
 
@@ -74,7 +71,7 @@ var imageHelper = {
 				imageHelper.canvas.setActiveObject(zoomablePannableImage);
 			}
 
-			imageHelper.toggleMovement();
+			imageHelper.toggleImageMovement(zoomablePannableImage);
 		};
 
 		img.src = url;
