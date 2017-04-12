@@ -17,13 +17,14 @@ var imageHelper = {
 	zoomPanMode: false,
 
 	/**
-	 * Toggle image movement.
+	 * Toggle image lock.
 	 * @param Object obj the image object
 	 */
-	toggleImageMovement: function (obj) {
+	toggleImageLock: function (obj) {
 		if (obj instanceof fabric.ZoomablePannableImage) {
 			obj.lockMovementX = imageHelper.zoomPanMode;
-			obj.lockMovementY = imageHelper.zoomPanMode;  
+			obj.lockMovementY = imageHelper.zoomPanMode;
+			obj.lockUniScaling = imageHelper.zoomPanMode;
 		}
 	},
 
@@ -32,7 +33,7 @@ var imageHelper = {
 	 */
 	toggleZoomPanMode: function () {
 		imageHelper.zoomPanMode = !imageHelper.zoomPanMode;
-		imageHelper.canvas.getObjects().forEach(imageHelper.toggleImageMovement);
+		imageHelper.canvas.getObjects().forEach(imageHelper.toggleImageLock);
 		console.debug('zoomPanMode', imageHelper.zoomPanMode);
 	},
 
@@ -71,7 +72,7 @@ var imageHelper = {
 				imageHelper.canvas.setActiveObject(zoomablePannableImage);
 			}
 
-			imageHelper.toggleImageMovement(zoomablePannableImage);
+			imageHelper.toggleImageLock(zoomablePannableImage);
 		};
 
 		img.src = url;
@@ -125,6 +126,7 @@ var imageHelper = {
 			}
 
 			console.log('onmousewheel');
+			console.log(event.deltaY);
 
 			var handled = imageHelper.zoomPanBy(0, 0, -event.deltaY / 5);
 
@@ -136,14 +138,22 @@ var imageHelper = {
     };
 
 		// Zooming: touch gesture
+		var currentScale = 1.0;
 		imageHelper.canvas.on('touch:gesture', function (options) {
-			console.log('touch:gesture');
-			console.log(options.e.constructor.name)
-			console.log(options.e.scaleY)
-			console.log(options.e.deltaY)
-			console.log(options.e.deltaX)
-			console.log(options.e.deltaZ)
-			console.log(JSON.stringify(options))
+			if (options.fingers !== 2 ||
+				!imageHelper.isValidForZoomingPanning(options.target)) {
+				return false;
+			}
+
+			if (options.state === 'start') {
+				currentScale = 1.0;
+				return false;
+			}
+
+			var scale = options.scale - currentScale;
+			currentScale = options.scale;
+
+			imageHelper.zoomPanBy(0, 0, scale);
 		});
 
 		// Panning: touch drag and mouse move
