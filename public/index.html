@@ -38,7 +38,6 @@ var imageHelper = {
 	toggleZoomPanMode: function () {
 		imageHelper.zoomPanMode = !imageHelper.zoomPanMode;
 		imageHelper.canvas.getObjects().forEach(imageHelper.toggleImageLock);
-		console.debug('zoomPanMode', imageHelper.zoomPanMode);
 	},
 
 	/**
@@ -132,6 +131,7 @@ var imageHelper = {
 			console.log('onmousewheel');
 			console.log(event.deltaY);
 
+			// TODO: need tuning the hard-coded value 5
 			var handled = imageHelper.zoomPanBy(0, 0, -event.deltaY / 5);
 
 			if (handled) {
@@ -146,7 +146,6 @@ var imageHelper = {
 		imageHelper.canvas.on('touch:gesture', function (options) {
 			if (options.self.fingers !== 2 ||
 				!imageHelper.isValidForZoomingPanning(options.target)) {
-					console.log(options.self.fingers);
 					return;
 			}
 
@@ -156,20 +155,20 @@ var imageHelper = {
 			}
 
 			var deltaScale = options.self.scale - currentScale;
+			// TODO: need tuning the hard-coded value +/-0.05
 			if (-0.05 < deltaScale && deltaScale < 0.05) {
 				return;
 			}
 
 			currentScale = options.self.scale;
 
+			// TODO: need tuning the hard-coded value 5
 			imageHelper.zoomPanBy(0, 0, deltaScale * imageHelper.canvas.getActiveObject().width / 5);
 		});
 
 		// Panning: touch drag and mouse move
 		var currentXY = 0;
 		imageHelper.canvas.on('touch:drag', function (options) {
-			console.log(JSON.stringify(options));
-			
 			if (options.self.state === 'down') {
 				currentXY = options.self.start;
 			}
@@ -185,6 +184,7 @@ var imageHelper = {
 			var event = options.e;
 			// Mouse move: use movementX and movementY
 			// Touch drag: calculate from previous x, y
+			// TODO: need tuning the hard-coded value 5
 			if (event.movementX) {
 				imageHelper.zoomPanBy(-event.movementX / 5, -event.movementY / 5, 0);
 			} else {
@@ -194,14 +194,6 @@ var imageHelper = {
 					y: options.self.y
 				};
 			}
-			var movementX = event.movementX || (options.self.x) 
-			var handled = imageHelper.zoomPanBy(-movementX / 5, -movementY / 5, 0);
-
-			// if (handled && event.preventDefault) {
-      // 	event.preventDefault();
-			// }
-
-			// return handled;
 		});
 
 		// Add some sample images
