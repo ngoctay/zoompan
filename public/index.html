@@ -159,7 +159,7 @@ var imageHelper = {
 			console.log(options.self.scale + ' - ' + currentScale + ' = ' + deltaScale);
 			currentScale = options.self.scale;
 
-			imageHelper.zoomPanBy(0, 0, deltaScale);
+			imageHelper.zoomPanBy(0, 0, deltaScale * imageHelper.canvas.getActiveObject().width);
 		});
 
 		// Panning: touch drag and mouse move
